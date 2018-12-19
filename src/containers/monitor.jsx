@@ -26,6 +26,7 @@ class Monitor extends React.Component {
         super(props);
         bindAll(this, [
             'handleDragEnd',
+            'handleHide',
             'handleNextMode',
             'handleSetModeToDefault',
             'handleSetModeToLarge',
@@ -94,6 +95,12 @@ class Monitor extends React.Component {
             y: newY
         }));
     }
+    handleHide () {
+        this.props.vm.runtime.requestUpdateMonitor(Map({
+            id: this.props.id,
+            visible: false
+        }));
+    }
     handleNextMode () {
         const modes = availableModes(this.props.opcode);
         const modeIndex = modes.indexOf(this.props.mode);
@@ -139,6 +146,7 @@ class Monitor extends React.Component {
                 targetId={this.props.targetId}
                 width={this.props.width}
                 onDragEnd={this.handleDragEnd}
+                onHide={this.handleHide}
                 onNextMode={this.handleNextMode}
                 onSetModeToDefault={this.handleSetModeToDefault}
                 onSetModeToLarge={this.handleSetModeToLarge}

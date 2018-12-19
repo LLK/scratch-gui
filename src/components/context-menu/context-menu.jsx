@@ -13,7 +13,7 @@ const StyledContextMenu = props => (
 const StyledMenuItem = props => (
     <MenuItem
         {...props}
-        attributes={{className: styles.menuItem}}
+        attributes={{className: styles.menuItem, dividerClassName: styles.divider}}
     />
 );
 

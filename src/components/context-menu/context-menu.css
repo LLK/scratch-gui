@@ -24,7 +24,14 @@
     transition: 0.1s ease;
 }
 
-.menu-item:hover {
+.menu-item:not(.divider):hover {
     background: $motion-primary;
     color: white;
+}
+
+.divider {
+    border-bottom: 1px solid $ui-black-transparent;
+    cursor: inherit;
+    margin-bottom: 3px;
+    padding: 2px 0;
 }

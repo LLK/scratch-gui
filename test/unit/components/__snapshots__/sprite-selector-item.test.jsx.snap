@@ -67,6 +67,7 @@ exports[`SpriteSelectorItemComponent matches snapshot when given a number and de
       aria-disabled="false"
       aria-orientation={null}
       className="react-contextmenu-item"
+      dividerClassName={undefined}
       onClick={[Function]}
       onMouseLeave={[Function]}
       onMouseMove={[Function]}
@@ -139,6 +140,7 @@ exports[`SpriteSelectorItemComponent matches snapshot when selected 1`] = `
       aria-disabled="false"
       aria-orientation={null}
       className="react-contextmenu-item"
+      dividerClassName={undefined}
       onClick={[Function]}
       onMouseLeave={[Function]}
       onMouseMove={[Function]}
