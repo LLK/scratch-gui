@@ -5,12 +5,39 @@ var webpack = require('webpack');
 // Plugins
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var MiniCssExtractPlugin = require('mini-css-extract-plugin');
 var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 // PostCss
 var autoprefixer = require('autoprefixer');
 var postcssVars = require('postcss-simple-vars');
 var postcssImport = require('postcss-import');
+
+const cssLoader = {
+    loader: 'css-loader',
+    options: {
+        modules: true,
+        importLoaders: 1,
+        localIdentName: '[name]_[local]_[hash:base64:5]',
+        camelCase: true
+    }
+};
+
+const postcssLoader = {
+    loader: 'postcss-loader',
+    options: {
+        ident: 'postcss',
+        plugins: function () {
+            return [
+                postcssImport,
+                postcssVars,
+                autoprefixer({
+                    browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']
+                })
+            ];
+        }
+    }
+};
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -57,34 +84,6 @@ const base = {
                     '@babel/preset-react'
                 ]
             }
-        },
-        {
-            test: /\.css$/,
-            use: [{
-                loader: 'style-loader'
-            }, {
-                loader: 'css-loader',
-                options: {
-                    modules: true,
-                    importLoaders: 1,
-                    localIdentName: '[name]_[local]_[hash:base64:5]',
-                    camelCase: true
-                }
-            }, {
-                loader: 'postcss-loader',
-                options: {
-                    ident: 'postcss',
-                    plugins: function () {
-                        return [
-                            postcssImport,
-                            postcssVars,
-                            autoprefixer({
-                                browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']
-                            })
-                        ];
-                    }
-                }
-            }]
         }]
     },
     optimization: {
@@ -123,6 +122,13 @@ module.exports = [
                     options: {
                         outputPath: 'static/assets/'
                     }
+                }, {
+                    test: /\.css$/,
+                    use: [{
+                        loader: process.env.NODE_ENV === 'production' ?
+                            MiniCssExtractPlugin.loader :
+                            'style-loader'
+                    }, cssLoader, postcssLoader]
                 }
             ])
         },
@@ -136,6 +142,12 @@ module.exports = [
             }
         },
         plugins: base.plugins.concat([
+            process.env.NODE_ENV === 'production' ?
+                new MiniCssExtractPlugin({
+                    filename: '[name].css',
+                    chunkFilename: '[id].css'
+                }) :
+                null,
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': '"' + process.env.NODE_ENV + '"',
                 'process.env.DEBUG': Boolean(process.env.DEBUG),
@@ -182,7 +194,7 @@ module.exports = [
                 from: 'extension-worker.{js,js.map}',
                 context: 'node_modules/scratch-vm/dist/web'
             }])
-        ])
+        ]).filter(Boolean)
     })
 ].concat(
     process.env.NODE_ENV === 'production' || process.env.BUILD_MODE === 'dist' ? (
@@ -210,6 +222,11 @@ module.exports = [
                             outputPath: 'static/assets/',
                             publicPath: '/static/assets/'
                         }
+                    }, {
+                        test: /\.css$/,
+                        use: [{
+                            loader: 'style-loader'
+                        }, cssLoader, postcssLoader]
                     }
                 ])
             },

@@ -74,6 +74,7 @@
     "lodash.omit": "4.5.0",
     "lodash.pick": "4.4.0",
     "lodash.throttle": "4.0.1",
+    "mini-css-extract-plugin": "^0.5.0",
     "minilog": "3.1.0",
     "mkdirp": "^0.5.1",
     "omggif": "1.0.9",
