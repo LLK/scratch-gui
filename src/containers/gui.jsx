@@ -18,6 +18,7 @@ import {
     COSTUMES_TAB_INDEX,
     SOUNDS_TAB_INDEX
 } from '../reducers/editor-tab';
+import {setStageSize} from '../reducers/stage-size';
 
 import {
     closeCostumeLibrary,
@@ -52,6 +53,9 @@ class GUI extends React.Component {
         setIsScratchDesktop(this.props.isScratchDesktop);
         this.setReduxTitle(this.props.projectTitle);
         this.props.onStorageInit(storage);
+        if (this.props.stageSizeMode) {
+            this.props.onSetStageSize(this.props.stageSizeMode);
+        }
     }
     componentDidUpdate (prevProps) {
         if (this.props.projectId !== prevProps.projectId && this.props.projectId !== null) {
@@ -89,12 +93,14 @@ class GUI extends React.Component {
             isScratchDesktop,
             isShowingProject,
             onProjectLoaded,
+            onSetStageSize,
             onStorageInit,
             onUpdateProjectId,
             onUpdateReduxProjectTitle,
             projectHost,
             projectId,
             projectTitle,
+            stageSizeMode,
             /* eslint-enable no-unused-vars */
             children,
             fetchingProject,
@@ -127,6 +133,7 @@ GUI.propTypes = {
     loadingStateVisible: PropTypes.bool,
     onProjectLoaded: PropTypes.func,
     onSeeCommunity: PropTypes.func,
+    onSetStageSize: PropTypes.func,
     onStorageInit: PropTypes.func,
     onUpdateProjectId: PropTypes.func,
     onUpdateProjectTitle: PropTypes.func,
@@ -134,6 +141,7 @@ GUI.propTypes = {
     projectHost: PropTypes.string,
     projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     projectTitle: PropTypes.string,
+    stageSizeMode: PropTypes.string,
     telemetryModalVisible: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired
 };
@@ -183,6 +191,7 @@ const mapDispatchToProps = dispatch => ({
     onRequestCloseBackdropLibrary: () => dispatch(closeBackdropLibrary()),
     onRequestCloseCostumeLibrary: () => dispatch(closeCostumeLibrary()),
     onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal()),
+    onSetStageSize: mode => dispatch(setStageSize(mode)),
     onUpdateReduxProjectTitle: title => dispatch(setProjectTitle(title))
 });
 
