@@ -38,6 +38,7 @@ class Monitor extends React.Component {
     constructor (props) {
         super(props);
         bindAll(this, [
+            'dragPositionToMonitorPosition',
             'handleDragStart',
             'handleDrag',
             'handleDragEnd',
@@ -54,12 +55,16 @@ class Monitor extends React.Component {
         ]);
         this.state = {
             sliderPrompt: false,
+            // Monitor coordinates, relative to the stage's top left corner
             x: 0,
             y: 0,
+            // The monitor coordinates when we start dragging
             dragStartMonitorX: 0,
             dragStartMonitorY: 0,
+            // The coordinates of the event when we start dragging
             dragStartEventX: 0,
             dragStartEventY: 0,
+            // Whether we are currently dragging this monitor
             dragging: false
         };
     }
@@ -114,34 +119,57 @@ class Monitor extends React.Component {
     componentWillUnmount () {
         this.props.removeMonitorRect(this.props.id);
     }
+    /**
+     * Convert a drag event into a stage-space monitor position, clamped inbounds.
+     * @param {number} dragX X position in CSS pixels of the drag event, relative to the top left stage corner
+     * @param {number} dragY Y position in CSS pixels of the drag event, relative to the top left stage corner
+     * @returns {object} Object containing clamped stage-space `x` and `y` positions of the monitor
+     */
+    dragPositionToMonitorPosition (dragX, dragY) {
+        const {offsetWidth, offsetHeight} = this.element;
+        const {widthDefault, heightDefault, scale} = this.props.stageSize;
+
+        let x = ((dragX / scale) - this.state.dragStartEventX) + this.state.dragStartMonitorX;
+        let y = ((dragY / scale) - this.state.dragStartEventY) + this.state.dragStartMonitorY;
+
+        x = Math.max(0, Math.min(x, widthDefault - offsetWidth));
+        y = Math.max(0, Math.min(y, heightDefault - offsetHeight));
+
+        return {x, y};
+    }
     handleDragStart (e, {x, y}) {
+        const {scale} = this.props.stageSize;
         this.setState({
-            dragStartEventX: x,
-            dragStartEventY: y,
+            dragStartEventX: x / scale,
+            dragStartEventY: y / scale,
             dragStartMonitorX: this.state.x,
             dragStartMonitorY: this.state.y,
             dragging: true
         });
     }
     handleDrag (e, {x, y}) {
+        const {x: monitorX, y: monitorY} = this.dragPositionToMonitorPosition(x, y);
         this.setState({
-            x: (x - this.state.dragStartEventX) + this.state.dragStartMonitorX,
-            y: (y - this.state.dragStartEventY) + this.state.dragStartMonitorY
+            x: monitorX,
+            y: monitorY
         });
     }
     handleDragEnd (e, {x, y}) {
+        const {x: monitorX, y: monitorY} = this.dragPositionToMonitorPosition(x, y);
         this.setState({
+            x: monitorX,
+            y: monitorY,
             dragging: false
         });
         this.props.onDragEnd(
             this.props.id,
-            x,
-            y
+            monitorX,
+            monitorY
         );
         this.props.vm.runtime.requestUpdateMonitor(Map({
             id: this.props.id,
-            x,
-            y
+            x: monitorX,
+            y: monitorY
         }));
     }
     handleNextMode () {
@@ -239,6 +267,7 @@ class Monitor extends React.Component {
                     mode={this.props.mode}
                     targetId={this.props.targetId}
                     width={this.props.width}
+                    stageSize={this.props.stageSize}
                     onDragStart={this.handleDragStart}
                     onDrag={this.handleDrag}
                     onDragEnd={this.handleDragEnd}
@@ -275,6 +304,11 @@ Monitor.propTypes = {
     removeMonitorRect: PropTypes.func.isRequired,
     resizeMonitorRect: PropTypes.func.isRequired,
     spriteName: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+    stageSize: PropTypes.shape({
+        widthDefault: PropTypes.number,
+        heightDefault: PropTypes.number,
+        scale: PropTypes.number
+    }).isRequired,
     targetId: PropTypes.string,
     value: PropTypes.oneOfType([
         PropTypes.string,
