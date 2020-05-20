@@ -1,7 +1,8 @@
 import React from 'react';
+import classNames from 'classnames';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import Draggable from 'react-draggable';
+import {DraggableCore} from 'react-draggable';
 import {FormattedMessage} from 'react-intl';
 import {ContextMenuTrigger} from 'react-contextmenu';
 import {BorderedMenuItem, ContextMenu, MenuItem} from '../context-menu/context-menu.jsx';
@@ -36,15 +37,20 @@ const MonitorComponent = props => (
         holdToDisplay={props.mode === 'slider' ? -1 : 1000}
         id={`monitor-${props.label}`}
     >
-        <Draggable
-            bounds=".monitor-overlay" // Class for monitor container
+        <DraggableCore
             cancel=".no-drag" // Class used for slider input to prevent drag
-            defaultClassNameDragging={styles.dragging}
             disabled={!props.draggable}
+            onStart={props.onDragStart}
+            onDrag={props.onDrag}
             onStop={props.onDragEnd}
         >
             <Box
-                className={styles.monitorContainer}
+                className={classNames(styles.monitorContainer, {
+                    [styles.dragging]: props.dragging
+                })}
+                style={{
+                    transform: `translate(${props.x}px, ${props.y}px)`
+                }}
                 componentRef={props.componentRef}
                 onDoubleClick={props.mode === 'list' || !props.draggable ? null : props.onNextMode}
             >
@@ -53,7 +59,7 @@ const MonitorComponent = props => (
                     ...props
                 })}
             </Box>
-        </Draggable>
+        </DraggableCore>
         {ReactDOM.createPortal((
             // Use a portal to render the context menu outside the flow to avoid
             // positioning conflicts between the monitors `transform: scale` and
@@ -122,8 +128,11 @@ MonitorComponent.propTypes = {
     category: PropTypes.oneOf(Object.keys(categories)),
     componentRef: PropTypes.func.isRequired,
     draggable: PropTypes.bool.isRequired,
+    dragging: PropTypes.bool.isRequired,
     label: PropTypes.string.isRequired,
     mode: PropTypes.oneOf(monitorModes),
+    onDragStart: PropTypes.func.isRequired,
+    onDrag: PropTypes.func.isRequired,
     onDragEnd: PropTypes.func.isRequired,
     onExport: PropTypes.func,
     onImport: PropTypes.func,
@@ -131,7 +140,9 @@ MonitorComponent.propTypes = {
     onSetModeToDefault: PropTypes.func,
     onSetModeToLarge: PropTypes.func,
     onSetModeToSlider: PropTypes.func,
-    onSliderPromptOpen: PropTypes.func
+    onSliderPromptOpen: PropTypes.func,
+    x: PropTypes.number,
+    y: PropTypes.number
 };
 
 MonitorComponent.defaultProps = {

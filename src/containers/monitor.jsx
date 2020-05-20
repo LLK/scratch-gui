@@ -38,6 +38,8 @@ class Monitor extends React.Component {
     constructor (props) {
         super(props);
         bindAll(this, [
+            'handleDragStart',
+            'handleDrag',
             'handleDragEnd',
             'handleNextMode',
             'handleSetModeToDefault',
@@ -51,7 +53,14 @@ class Monitor extends React.Component {
             'setElement'
         ]);
         this.state = {
-            sliderPrompt: false
+            sliderPrompt: false,
+            x: 0,
+            y: 0,
+            dragStartMonitorX: 0,
+            dragStartMonitorY: 0,
+            dragStartEventX: 0,
+            dragStartEventY: 0,
+            dragging: false
         };
     }
     componentDidMount () {
@@ -79,8 +88,12 @@ class Monitor extends React.Component {
                 y: rect.upperStart.y
             }));
         }
-        this.element.style.top = `${rect.upperStart.y}px`;
-        this.element.style.left = `${rect.upperStart.x}px`;
+
+        const {x, y} = rect.upperStart;
+        // There's no way around it--we have to do layout twice: once to determine the monitor dimensions for
+        // getInitialPosition and once to move the monitor to its proper position.
+        // eslint-disable-next-line react/no-did-mount-set-state
+        this.setState({x, y});
     }
     shouldComponentUpdate (nextProps, nextState) {
         if (nextState !== this.state) {
@@ -101,18 +114,34 @@ class Monitor extends React.Component {
     componentWillUnmount () {
         this.props.removeMonitorRect(this.props.id);
     }
+    handleDragStart (e, {x, y}) {
+        this.setState({
+            dragStartEventX: x,
+            dragStartEventY: y,
+            dragStartMonitorX: this.state.x,
+            dragStartMonitorY: this.state.y,
+            dragging: true
+        });
+    }
+    handleDrag (e, {x, y}) {
+        this.setState({
+            x: (x - this.state.dragStartEventX) + this.state.dragStartMonitorX,
+            y: (y - this.state.dragStartEventY) + this.state.dragStartMonitorY
+        });
+    }
     handleDragEnd (e, {x, y}) {
-        const newX = parseInt(this.element.style.left, 10) + x;
-        const newY = parseInt(this.element.style.top, 10) + y;
+        this.setState({
+            dragging: false
+        });
         this.props.onDragEnd(
             this.props.id,
-            newX,
-            newY
+            x,
+            y
         );
         this.props.vm.runtime.requestUpdateMonitor(Map({
             id: this.props.id,
-            x: newX,
-            y: newY
+            x,
+            y
         }));
     }
     handleNextMode () {
@@ -199,7 +228,10 @@ class Monitor extends React.Component {
                 <MonitorComponent
                     componentRef={this.setElement}
                     {...monitorProps}
+                    x={this.state.x}
+                    y={this.state.y}
                     draggable={this.props.draggable}
+                    dragging={this.state.dragging}
                     height={this.props.height}
                     isDiscrete={this.props.isDiscrete}
                     max={this.props.max}
@@ -207,6 +239,8 @@ class Monitor extends React.Component {
                     mode={this.props.mode}
                     targetId={this.props.targetId}
                     width={this.props.width}
+                    onDragStart={this.handleDragStart}
+                    onDrag={this.handleDrag}
                     onDragEnd={this.handleDragEnd}
                     onExport={isList ? this.handleExport : null}
                     onImport={isList ? this.handleImport : null}
