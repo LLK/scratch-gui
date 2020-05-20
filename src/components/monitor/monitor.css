@@ -33,6 +33,7 @@
 .label {
     font-weight: bold;
     text-align: center;
+    color: $text-primary;
     margin: 0 5px;
 }
 
