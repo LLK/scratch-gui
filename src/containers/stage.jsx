@@ -330,9 +330,11 @@ class Stage extends React.Component {
         this.dragCanvas.style.display = 'none';
     }
     positionDragCanvas (mouseX, mouseY) {
-        // mouseX/Y are relative to stage top/left, and dragCanvas is already
-        // positioned so that the pick location is at (0,0).
-        this.dragCanvas.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+        // mouseX/Y are relative to stage top/left, but dragCanvas is
+        // positioned at top left of the whole viewport, so account for this.
+        const x = this.rect.left + mouseX;
+        const y = this.rect.top + mouseY;
+        this.dragCanvas.style.transform = `translate(${x}px, ${y}px)`;
     }
     onStartDrag (x, y) {
         if (this.state.dragId) return;

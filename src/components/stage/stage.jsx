@@ -118,12 +118,16 @@ const StageComponent = props => {
                         </div>
                     )}
                 </div>
-                <canvas
-                    className={styles.draggingSprite}
-                    height={0}
-                    ref={dragRef}
-                    width={0}
-                />
+                <div
+                    className={styles.draggingSpriteWrapper}
+                >
+                    <canvas
+                        className={styles.draggingSprite}
+                        height={0}
+                        ref={dragRef}
+                        width={0}
+                    />
+                </div>
             </Box>
             {isColorPicking ? (
                 <Box
