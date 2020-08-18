@@ -5,6 +5,7 @@ const SET_CALLBACK = 'scratch-gui/custom-procedures/SET_CALLBACK';
 const initialState = {
     active: false,
     mutator: null,
+    isEdit: false,
     callback: null
 };
 
@@ -15,6 +16,7 @@ const reducer = function (state, action) {
         return Object.assign({}, state, {
             active: true,
             mutator: action.mutator,
+            isEdit: action.isEdit,
             callback: action.callback
         });
     case DEACTIVATE_CUSTOM_PROCEDURES:
@@ -26,6 +28,7 @@ const reducer = function (state, action) {
         return Object.assign({}, state, {
             active: false,
             mutator: null,
+            isEdit: false,
             callback: null
         });
     case SET_CALLBACK:
@@ -38,13 +41,15 @@ const reducer = function (state, action) {
 /**
  * Action creator to open the custom procedures modal.
  * @param {!Element} mutator The XML node of the mutator for the procedure.
+ * @param {!boolean} isEdit True if editing an existing custom procedure.
  * @param {!function(!Element)} callback The function to call when done editing procedure.
  *     Expect the callback to be a function that takes a new XML mutator node.
  * @returns {object} An action object with type ACTIVATE_CUSTOM_PROCEDURES.
  */
-const activateCustomProcedures = (mutator, callback) => ({
+const activateCustomProcedures = (mutator, isEdit, callback) => ({
     type: ACTIVATE_CUSTOM_PROCEDURES,
     mutator: mutator,
+    isEdit: isEdit,
     callback: callback
 });
 

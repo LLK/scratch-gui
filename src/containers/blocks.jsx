@@ -492,9 +492,20 @@ class Blocks extends React.Component {
     }
     handleCustomProceduresClose (data) {
         this.props.onRequestCloseCustomProcedures(data);
+
+        // No data: the user cancelled the dialog, so don't do anything to the workspace.
+        if (!data) {
+            return;
+        }
+
         const ws = this.workspace;
         ws.refreshToolboxSelection_();
-        ws.toolbox_.scrollToCategoryById('myBlocks');
+
+        // Only scroll to My Blocks section if the action is creating a new custom block - not when editing
+        // an existing one.
+        if (!this.props.customProceduresIsEdit) {
+            ws.toolbox_.scrollToCategoryById('myBlocks');
+        }
     }
     handleDrop (dragInfo) {
         fetch(dragInfo.payload.bodyUrl)
@@ -654,12 +665,15 @@ const mapStateToProps = state => ({
     locale: state.locales.locale,
     messages: state.locales.messages,
     toolboxXML: state.scratchGui.toolbox.toolboxXML,
+    customProceduresIsEdit: state.scratchGui.customProcedures.isEdit,
     customProceduresVisible: state.scratchGui.customProcedures.active
 });
 
 const mapDispatchToProps = dispatch => ({
     onActivateColorPicker: callback => dispatch(activateColorPicker(callback)),
-    onActivateCustomProcedures: (data, callback) => dispatch(activateCustomProcedures(data, callback)),
+    onActivateCustomProcedures: (mutator, isEdit, callback) => {
+        dispatch(activateCustomProcedures(mutator, isEdit, callback));
+    },
     onOpenConnectionModal: id => {
         dispatch(setConnectionModalExtensionId(id));
         dispatch(openConnectionModal());
@@ -671,8 +685,8 @@ const mapDispatchToProps = dispatch => ({
     onRequestCloseExtensionLibrary: () => {
         dispatch(closeExtensionLibrary());
     },
-    onRequestCloseCustomProcedures: data => {
-        dispatch(deactivateCustomProcedures(data));
+    onRequestCloseCustomProcedures: mutator => {
+        dispatch(deactivateCustomProcedures(mutator));
     },
     updateToolboxState: toolboxXML => {
         dispatch(updateToolbox(toolboxXML));
