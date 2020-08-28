@@ -10,11 +10,13 @@
  */
 const emptyCostume = name => ({
     name: name,
-    md5: 'cd21514d0531fdffb22204e0ec5ed84a.svg',
+    assetId: 'cd21514d0531fdffb22204e0ec5ed84a',
+    md5ext: 'cd21514d0531fdffb22204e0ec5ed84a.svg',
+    md5: 'cd21514d0531fdffb22204e0ec5ed84a.svg', // @todo For some reason, md5 is required (or the serialization breaks)
+    bitmapResolution: 1,
     rotationCenterX: 0,
     rotationCenterY: 0,
-    bitmapResolution: 1,
-    skinId: null
+    dataFormat: 'svg'
 });
 
 /**
@@ -26,36 +28,42 @@ const emptyCostume = name => ({
  * @return {object} object expected by vm.addSprite
  */
 const emptySprite = (name, soundName, costumeName) => ({
-    objName: name,
+    isStage: false,
+    name: name,
+    variables: {},
+    lists: {},
+    broadcasts: {},
+    blocks: {},
     sounds: [
         {
-            soundName: soundName,
-            soundID: -1,
-            md5: '83a9787d4cb6f3b7632b4ddfebf74367.wav',
+            name: soundName,
+            assetId: '83a9787d4cb6f3b7632b4ddfebf74367',
+            md5ext: '83a9787d4cb6f3b7632b4ddfebf74367.wav',
             sampleCount: 258,
             rate: 11025,
+            dataFormat: 'wav',
             format: ''
         }
     ],
     costumes: [
         {
-            costumeName: costumeName,
-            baseLayerID: -1,
-            baseLayerMD5: 'cd21514d0531fdffb22204e0ec5ed84a.svg',
+            name: costumeName,
+            assetId: 'cd21514d0531fdffb22204e0ec5ed84a',
+            md5ext: 'cd21514d0531fdffb22204e0ec5ed84a.svg',
             bitmapResolution: 1,
+            dataFormat: 'svg',
             rotationCenterX: 0,
             rotationCenterY: 0
         }
     ],
-    currentCostumeIndex: 0,
-    scratchX: 36,
-    scratchY: 28,
-    scale: 1,
+    currentCostume: 0,
+    x: 36,
+    y: 28,
+    size: 100,
     direction: 90,
-    rotationStyle: 'normal',
-    isDraggable: false,
-    visible: true,
-    spriteInfo: {}
+    rotationStyle: 'all around',
+    draggable: false,
+    visible: true
 });
 
 export {

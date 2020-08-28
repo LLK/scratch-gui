@@ -83,7 +83,7 @@ class StageSelector extends React.Component {
     handleNewBackdrop (backdrops_, shouldActivateTab = true) {
         const backdrops = Array.isArray(backdrops_) ? backdrops_ : [backdrops_];
         return Promise.all(backdrops.map(backdrop =>
-            this.props.vm.addBackdrop(backdrop.md5, backdrop)
+            this.props.vm.addBackdrop(backdrop.md5 || backdrop.md5ext, backdrop)
         )).then(() => {
             if (shouldActivateTab) {
                 return this.props.onActivateTab(COSTUMES_TAB_INDEX);

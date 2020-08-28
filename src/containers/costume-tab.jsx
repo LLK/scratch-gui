@@ -163,9 +163,9 @@ class CostumeTab extends React.Component {
 
         return Promise.all(costumes.map(c => {
             if (fromCostumeLibrary) {
-                return this.props.vm.addCostumeFromLibrary(c.md5, c);
+                return this.props.vm.addCostumeFromLibrary(c.md5 || c.md5ext, c);
             }
-            return this.props.vm.addCostume(c.md5, c);
+            return this.props.vm.addCostume(c.md5 || c.md5ext, c);
         }));
     }
     handleNewBlankCostume () {
