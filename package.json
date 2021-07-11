@@ -56,7 +56,7 @@
     "postcss-simple-vars": "^5.0.1",
     "prop-types": "^15.5.10",
     "query-string": "^5.1.1",
-    "raw-loader": "^0.5.1",
+    "raw-loader": "^4.0.2",
     "react": "16.2.0",
     "react-contextmenu": "2.9.4",
     "react-dom": "16.2.1",
