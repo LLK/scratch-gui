@@ -36,6 +36,7 @@
     "core-js": "2.5.7",
     "css-loader": "^1.0.0",
     "es6-object-assign": "1.1.0",
+    "fastestsmallesttextencoderdecoder": "^1.0.22",
     "file-loader": "2.0.0",
     "get-float-time-domain-data": "0.1.0",
     "get-user-media-promise": "1.1.4",
@@ -84,7 +85,6 @@
     "scratch-vm": "0.2.0-prerelease.20210706190652",
     "startaudiocontext": "1.2.1",
     "style-loader": "^0.23.0",
-    "text-encoding": "0.7.0",
     "to-style": "1.3.3",
     "wav-encoder": "1.3.0",
     "xhr": "2.5.0"
