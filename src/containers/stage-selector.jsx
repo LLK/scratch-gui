@@ -11,7 +11,7 @@ import {showStandardAlert, closeAlertWithId} from '../reducers/alerts';
 import {setHoveredSprite} from '../reducers/hovered-target';
 import DragConstants from '../lib/drag-constants';
 import DropAreaHOC from '../lib/drop-area-hoc.jsx';
-import ThrottledPropertyHOC from '../lib/throttled-property-hoc.jsx';
+import DebouncedPropertyHOC from '../lib/debounced-property-hoc.jsx';
 import {emptyCostume} from '../lib/empty-assets';
 import sharedMessages from '../lib/shared-messages';
 import {fetchCode} from '../lib/backpack-api';
@@ -30,8 +30,8 @@ const dragTypes = [
     DragConstants.BACKPACK_CODE
 ];
 
-const DroppableThrottledStage = DropAreaHOC(dragTypes)(
-    ThrottledPropertyHOC('url', 500)(StageSelectorComponent)
+const DroppableDebouncedStage = DropAreaHOC(dragTypes)(
+    DebouncedPropertyHOC('url', 500)(StageSelectorComponent)
 );
 
 class StageSelector extends React.Component {
@@ -161,7 +161,7 @@ class StageSelector extends React.Component {
             'asset', 'dispatchSetHoveredSprite', 'id', 'intl',
             'onActivateTab', 'onSelect', 'onShowImporting', 'onCloseImporting']);
         return (
-            <DroppableThrottledStage
+            <DroppableDebouncedStage
                 componentRef={this.setRef}
                 fileInputRef={this.setFileInput}
                 onBackdropFileUpload={this.handleBackdropUpload}

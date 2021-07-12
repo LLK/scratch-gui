@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 
-import ThrottledPropertyHOC from '../lib/throttled-property-hoc.jsx';
+import DebouncedPropertyHOC from '../lib/debounced-property-hoc.jsx';
 
 import VM from 'scratch-vm';
 import storage from '../lib/storage';
@@ -27,6 +27,7 @@ class Watermark extends React.Component {
     }
 
     render () {
+        console.log('rerendering watermark');
         const componentProps = omit(this.props, ['asset', 'vm']);
         return (
             <WatermarkComponent
@@ -65,7 +66,7 @@ const mapStateToProps = state => {
 const ConnectedComponent = connect(
     mapStateToProps
 )(
-    ThrottledPropertyHOC('asset', 500)(Watermark)
+    DebouncedPropertyHOC('asset', 2000)(Watermark)
 );
 
 export default ConnectedComponent;
