@@ -34,7 +34,7 @@
     "computed-style-to-inline-style": "3.0.0",
     "copy-webpack-plugin": "^4.5.1",
     "core-js": "2.5.7",
-    "css-loader": "^1.0.0",
+    "css-loader": "^5.2.6",
     "es6-object-assign": "1.1.0",
     "file-loader": "2.0.0",
     "get-float-time-domain-data": "0.1.0",
