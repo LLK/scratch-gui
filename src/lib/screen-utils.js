@@ -11,9 +11,13 @@ import layout, {STAGE_DISPLAY_SCALES, STAGE_SIZE_MODES, STAGE_DISPLAY_SIZES} fro
 
 const STAGE_DIMENSION_DEFAULTS = {
     // referencing css/units.css,
-    // spacingBorderAdjustment = 2 * $full-screen-top-bottom-margin +
-    //   2 * $full-screen-border-width
+    // fullScreenSpacingBorderAdjustment = 2 * $stage-full-screen-stage-padding +
+    //   2 * $stage-full-screen-border-width
     fullScreenSpacingBorderAdjustment: 12,
+    // if width is constrained by window, use this total margin
+    // referencing css/units.css,
+    // widthConstrainedMargin = 2 * $space
+    widthConstrainedMargin: 16,
     // referencing css/units.css,
     // menuHeightAdjustment = $stage-menu-height
     menuHeightAdjustment: 44
@@ -57,16 +61,20 @@ const getStageDimensions = (stageSize, isFullScreen) => {
 
         stageDimensions.width = stageDimensions.height + (stageDimensions.height / 3);
 
-        if (stageDimensions.width > window.innerWidth) {
-            stageDimensions.width = window.innerWidth;
-            stageDimensions.height = stageDimensions.width * .75;
-        }
-
         stageDimensions.scale = stageDimensions.width / stageDimensions.widthDefault;
     } else {
         stageDimensions.scale = STAGE_DISPLAY_SCALES[stageSize];
         stageDimensions.height = stageDimensions.scale * stageDimensions.heightDefault;
         stageDimensions.width = stageDimensions.scale * stageDimensions.widthDefault;
+    }
+
+    // constrain width to window size, whether in fullscreen or not
+    const minStageWidth = Math.min(window.outerWidth, window.innerWidth) -
+        STAGE_DIMENSION_DEFAULTS.widthConstrainedMargin;
+    if (stageDimensions.width > minStageWidth) {
+        stageDimensions.width = minStageWidth;
+        stageDimensions.height = stageDimensions.width * .75;
+        stageDimensions.scale = stageDimensions.width / stageDimensions.widthDefault;
     }
 
     // Round off dimensions to prevent resampling/blurriness
