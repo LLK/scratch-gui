@@ -48,7 +48,9 @@ class ListMonitorScroller extends React.Component {
                         <div className={styles.inputWrapper}>
                             <input
                                 autoFocus
+                                autoCapitalize="none"
                                 autoComplete={false}
+                                autoCorrect="off"
                                 className={classNames(styles.listInput, 'no-drag')}
                                 spellCheck={false}
                                 type="text"

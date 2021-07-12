@@ -46,6 +46,8 @@ const PromptComponent = props => (
             <Box>
                 <input
                     autoFocus
+                    autoCapitalize="none"
+                    autoCorrect="off"
                     className={styles.variableNameTextInput}
                     defaultValue={props.defaultValue}
                     name={props.label}

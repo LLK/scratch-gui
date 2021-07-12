@@ -20,6 +20,8 @@ exports[`Sound Editor Component matches snapshot 1`] = `
           Sound
         </span>
         <input
+          autoCapitalize="none"
+          autoCorrect="off"
           className=""
           onBlur={[Function]}
           onChange={[Function]}

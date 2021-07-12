@@ -9,6 +9,8 @@ const Input = props => {
     return (
         <input
             {...componentProps}
+            autoCapitalize="none"
+            autoCorrect="off"
             className={classNames(
                 styles.inputForm,
                 props.className,

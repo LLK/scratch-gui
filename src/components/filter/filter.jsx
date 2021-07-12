@@ -26,6 +26,8 @@ const FilterComponent = props => {
                 src={filterIcon}
             />
             <input
+                autoCapitalize="none"
+                autoCorrect="off"
                 className={classNames(styles.filterInput, inputClassName)}
                 placeholder={placeholderText}
                 type="text"
