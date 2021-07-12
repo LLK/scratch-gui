@@ -67,6 +67,7 @@ const initPlayer = function (currentState) {
         {},
         currentState,
         {mode: {
+            editorModeEnabled: false,
             isFullScreen: currentState.mode.isFullScreen,
             isPlayerOnly: true,
             // When initializing in player mode, make sure to reset
@@ -80,6 +81,7 @@ const initFullScreen = function (currentState) {
         {},
         currentState,
         {mode: {
+            editorModeEnabled: true,
             isFullScreen: true,
             isPlayerOnly: currentState.mode.isPlayerOnly,
             hasEverEnteredEditor: currentState.mode.hasEverEnteredEditor
@@ -92,6 +94,7 @@ const initEmbedded = function (currentState) {
         {},
         currentState,
         {mode: {
+            editorModeEnabled: false,
             showBranding: true,
             isFullScreen: true,
             isPlayerOnly: true,
