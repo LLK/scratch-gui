@@ -205,6 +205,7 @@ class Monitor extends React.Component {
                     max={this.props.max}
                     min={this.props.min}
                     mode={this.props.mode}
+                    opcode={this.props.opcode}
                     targetId={this.props.targetId}
                     width={this.props.width}
                     onDragEnd={this.handleDragEnd}
