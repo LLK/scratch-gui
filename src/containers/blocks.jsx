@@ -68,6 +68,7 @@ class Blocks extends React.Component {
             'onBlockGlowOff',
             'handleExtensionAdded',
             'handleBlocksInfoUpdate',
+            'onDocumentMouseDown',
             'onTargetsUpdate',
             'onVisualReport',
             'onWorkspaceUpdate',
@@ -128,6 +129,8 @@ class Blocks extends React.Component {
         // @todo change this when blockly supports UI events
         addFunctionListener(this.workspace, 'translate', this.onWorkspaceMetricsChange);
         addFunctionListener(this.workspace, 'zoom', this.onWorkspaceMetricsChange);
+
+        document.addEventListener('mousedown', this.onDocumentMouseDown);
 
         this.attachVM();
         // Only update blocks/vm locale when visible to avoid sizing issues
@@ -190,6 +193,7 @@ class Blocks extends React.Component {
         this.detachVM();
         this.workspace.dispose();
         clearTimeout(this.toolboxUpdateTimeout);
+        document.removeEventListener('mousedown', this.onDocumentMouseDown);
     }
     requestToolboxUpdate () {
         clearTimeout(this.toolboxUpdateTimeout);
@@ -288,6 +292,26 @@ class Blocks extends React.Component {
                 block.inputList[0].fieldRow[0].setValue(value);
             }
         });
+    }
+
+    onDocumentMouseDown (evt) {
+        // When the user clicks not inside the Blockly injection div *or* a widget/etc, the click certainly happened
+        // outside of Blockly, so call hideChaff to hide inputs, menus, etc. (If the click happened inside one of those
+        // elements, Blockly will handle relevant logic itself.
+
+        const injectionDiv = this.workspace.getInjectionDiv();
+        let el = evt.target;
+        while (el) {
+            if (el === injectionDiv) {
+                return;
+            }
+            if (Array.from(el.classList).find(cls => /blockly(.*)Div/.test(cls))) {
+                return;
+            }
+            el = el.parentElement;
+        }
+
+        this.ScratchBlocks.hideChaff();
     }
 
     onTargetsUpdate () {
