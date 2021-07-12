@@ -62,6 +62,9 @@ import {
 } from '../../reducers/menus';
 
 import collectMetadata from '../../lib/collect-metadata';
+import getThumbnail from '../../lib/project-thumbnail';
+import dataURItoBlob from '../../lib/data-uri-to-blob';
+import downloadBlob from '../../lib/download-blob';
 
 import styles from './menu-bar.css';
 
@@ -167,6 +170,7 @@ class MenuBar extends React.Component {
             'handleClickSaveAsCopy',
             'handleClickSeeCommunity',
             'handleClickShare',
+            'handleClickThumbnail',
             'handleKeyPress',
             'handleLanguageMouseUp',
             'handleRestoreOption',
@@ -233,6 +237,13 @@ class MenuBar extends React.Component {
             restoreFun();
             this.props.onRequestCloseEdit();
         };
+    }
+    handleClickThumbnail () {
+        getThumbnail(this.props.vm, dataURI => {
+            const blob = dataURItoBlob(dataURI);
+            downloadBlob('stage.png', blob); // @todo: localization here?
+        });
+        this.props.onRequestCloseEdit();
     }
     handleKeyPress (event) {
         const modifier = bowser.mac ? event.metaKey : event.ctrlKey;
@@ -362,6 +373,13 @@ class MenuBar extends React.Component {
                 defaultMessage="New"
                 description="Menu bar item for creating a new project"
                 id="gui.menuBar.new"
+            />
+        );
+        const thumbnailMessage = (
+            <FormattedMessage
+                defaultMessage="Save picture of stage"
+                description="Menu bar for saving the picture of stage"
+                id="gui.menuBar.saveThumbnailStage"
             />
         );
         const remixButton = (
@@ -526,6 +544,14 @@ class MenuBar extends React.Component {
                                             )}
                                         </MenuItem>
                                     )}</TurboMode>
+                                </MenuSection>
+                                <MenuSection>
+                                    <MenuItem
+                                        isRtl={this.props.isRtl}
+                                        onClick={this.handleClickThumbnail}
+                                    >
+                                        {thumbnailMessage}
+                                    </MenuItem>
                                 </MenuSection>
                             </MenuBarMenu>
                         </div>

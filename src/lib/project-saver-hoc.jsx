@@ -9,6 +9,7 @@ import log from '../lib/log';
 import storage from '../lib/storage';
 import dataURItoBlob from '../lib/data-uri-to-blob';
 import saveProjectToServer from '../lib/save-project-to-server';
+import getThumbnail from '../lib/project-thumbnail';
 
 import {
     showAlertWithTimeout,
@@ -278,12 +279,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
         }
 
         getProjectThumbnail (callback) {
-            this.props.vm.postIOData('video', {forceTransparentPreview: true});
-            this.props.vm.renderer.requestSnapshot(dataURI => {
-                this.props.vm.postIOData('video', {forceTransparentPreview: false});
-                callback(dataURI);
-            });
-            this.props.vm.renderer.draw();
+            getThumbnail(this.props.vm, callback);
         }
 
         /**
