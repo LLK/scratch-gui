@@ -30,7 +30,24 @@ import throttle from 'redux-throttle';
 
 import decks from '../lib/libraries/decks/index.jsx';
 
-const guiMiddleware = compose(applyMiddleware(throttle(300, {leading: true, trailing: true})));
+const checkActionMiddleware = (/* store */) => (
+    next => (
+        action => {
+            if (action === null || typeof action === 'undefined') {
+                // something like this might help with debugging:
+                // console.log('Redux state at time of missing action:', store.getState());
+                throw new Error('Missing action in middleware. Invalid state transition?');
+            }
+            // if action is null or undefined then this call probably would have thrown anyway
+            return next(action);
+        }
+    )
+);
+
+const guiMiddleware = compose(applyMiddleware(
+    checkActionMiddleware,
+    throttle(300, {leading: true, trailing: true})
+));
 
 const guiInitialState = {
     alerts: alertsInitialState,
