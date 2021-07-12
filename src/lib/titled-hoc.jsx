@@ -36,10 +36,15 @@ const TitledHOC = function (WrappedComponent) {
                 const defaultProjectTitle = this.handleReceivedProjectTitle();
                 this.props.onUpdateProjectTitle(defaultProjectTitle);
             }
-            // if the projectTitle hasn't changed, but the reduxProjectTitle
-            // HAS changed, we need to report that change to the projectTitle's owner
-            if (this.props.reduxProjectTitle !== prevProps.reduxProjectTitle &&
-                this.props.reduxProjectTitle !== this.props.projectTitle) {
+            // if the user has changed the project Title, and the projectTitle prop
+            // passed in to us is stale (defined, but old), we need to notify
+            // the source of the projectTitle that it should be updated
+            const reduxTitleHasChanged =
+                (this.props.reduxProjectTitle !== prevProps.reduxProjectTitle &&
+                this.props.reduxProjectTitle !== this.props.projectTitle);
+            const titlePropIsSet = ((this.props.projectTitle !== null) &&
+                (typeof this.props.projectTitle !== 'undefined'));
+            if (titlePropIsSet && reduxTitleHasChanged) {
                 this.props.onUpdateProjectTitle(this.props.reduxProjectTitle);
             }
         }
@@ -102,9 +107,15 @@ const TitledHOC = function (WrappedComponent) {
         onChangedProjectTitle: title => dispatch(setProjectTitle(title))
     });
 
+    // Allow incoming props to override redux-provided props. Used to mock in tests.
+    const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign(
+        {}, stateProps, dispatchProps, ownProps
+    );
+
     return injectIntl(connect(
         mapStateToProps,
         mapDispatchToProps,
+        mergeProps
     )(TitledComponent));
 };
 
